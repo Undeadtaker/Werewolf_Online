@@ -1,163 +1,162 @@
+const { v4: uuidv4 } = require('uuid');
 var express = require('express');
-var socket = require('socket.io');
+var socket = require('socket.io')
 
 
+// --------------------------------------------------- THE GAME SIDE --------------------------------------------------- //
 
+var players = [];
 
-
-
-//  ---------- SERVER SIDE ----------
-
-
-// Player class
-class Player {
-  constructor(name, id, ready) {
+// Define the class for session
+class session {
+  constructor(name) {
     this.name = name;
-    this.id = id;
-    this.ready = ready;
+    this.werewolves = [];
+	this.villagers = [];
+	this.witch = null;
+	this.hunter = null;
+	this.seer = null;
+	this.cupid = null;
+	this.lovers = [];
   }
 }
 
+// Initiating dummy session object
+session1 = new session("Session 1");
+session1.players = ["Filip","Vassili","Luc","Abdulkader","Alvaro","Marwin","JP","Akash"];
+session1.werewolves.push("Filip");
+session1.werewolves.push("Vassili");
+session1.werewolves.push("Luc");
+session1.villagers.push("Abdulkader");
+session1.villagers.push("Alvaro");
+session1.witch = "Marwin";
+session1.hunter = "JP";
+session1.seer = "Akash";
 
-// variables
-player_li = []
 
-// redirections 
-var destination = '/room.html';
-
-// functions
-
-// TODO I have to implement a way to make sure that every time this function is called that
-// it doesn't go through the list again, but just retruns a value.
-function check(li){
-	all_ready = false
-
-	for (i = 0; i < li.length; i++){
-		if(li[i].ready == false){
-			all_ready = false;
-		}	
-		else{
-			all_ready = true;
-		}	
-	}
-	if (li.length >= 6 && all_ready == true){
-		console.log('The game starts soon!')
-		return ('start');
-		}
-}
+// Define the class for users
+class user {
+  constructor(name,ID) {
+    //this.id = uuidv4();
+	this.name = name;
+	this.id = ID;
+  }
+} 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+// --------------------------------------------------- THE SERVER SIDE --------------------------------------------------- //
 
 // App setup
 var app = express();
 var server = app.listen(4000, function(){
-    console.log('listening for requests on port 4000,');
-});
+	console.log('Listening to new connections on port 4000');
+}); // listen to port number
 
-// Static files
+// Directory for static files
 app.use(express.static('public'));
 
-
-
-//--------------------------------------- SOCKET ----------------------------------------// 
-
-
-// Socket setup & pass server
+// Socket setup
 var io = socket(server);
-io.on('connection', (socket) => {
-    console.log('made socket connection', socket.id);
 
+io.on('connection', function(socket){
+	console.log('made the connection');
+	console.log(socket['id']) // the ID of the user
 
-// LOBBY FUNCTIONS
+	//console.log(players)
 
-    // Sending all sockets in the lobby to inform them about the number of players in each room
-    socket.on('getPlayers', function(){
-        socket.emit('getPlayers', player_li.length);
-    });
+	// gets fired if chat object is sent
+	socket.on('chat', function(data){ //chat refers to object sent by chat.js
+
+		players.push({
+			conn_id : socket['id'],
+			user_name : data['handle']
+		})
+
+		//console.log(players)
+		//sockets means every socket
+		io.sockets.emit('chat', data); // sending the same object with name chat to all sockets
+	});
+
+	// gets fired if get_number_of_players object is received from the client
+	socket.on('get_number_of_players', function(data){
+		number_of_players = [[10,12],[22,25],[5,8]];
+		//console.log(players)
+		//sockets means every socket
+		io.sockets.emit('get_number_of_players', number_of_players); // sending the same object with name get_number_of_players to all sockets
+	});
+
+	// gets fired if get_session object is received from the client
+	socket.on('get_session', function(data){
 	
+		//sockets means every socket
+		io.sockets.emit('get_session', session1); // sending the same object with name session1 to all sockets
+	});
 
-
-
-
-
-// ROOM1 FUNCTIONS
-
-    // Joining room1
-    socket.on('giveID', function(data){
-    	let player = new Player("Player", data, false);
-    	player_li.push(player)
-    	socket.join('room1');
-
-    	console.log(player_li)
-    	for (i = 0; i < player_li.length; i++){
-    		player_li[i].ready = false;
-    	}
-    });
-
-    // Function that changes the name of the player who sent the request
-    socket.on('changeName', function(name){
-    	for (i = 0; i < player_li.length; i++){
-    		if (player_li[i].id == socket.id){
-    			player_li[i].name = name;
-    		}
-    	}
-    });
-
-    // Sending all sockets in the room the names of the players
-    socket.on('getNames', function(){
-        socket.emit('getNames', player_li);
-    });
-
-    // Setting the ready attribute of Player
-    socket.on('ready', function(){
-        for (i = 0; i < player_li.length; i++){
-    		if (player_li[i].id == socket.id){
-    			player_li[i].ready = true;
-    		}
-    	}
-    	if (check(player_li) == 'start'){
-    		console.log('server side ready');
-    		io.to('room1').emit('START');
-
-    	};
-    });
-
-
-
-
-
-
-
-
-
-    // redirecting player to room1, must be bellow socket.on 'giveID'
-    socket.on('room1', function(data){
-    	socket.emit('redirect', destination)
+	// gets fired if new_user object is received from the client
+	socket.on('new_user', function(data){
+	
+		//sockets means every socket
+		//response = addNewUser(data);
+		//data = JSON.stringify(data);
+		//console.log(data);
+		var x = addNewUser(data);
+		if(x){
+			console.log("added",data,"to list USERS");
+		}
+		else{
+			console.log("received request to add",data,"to list USERS, but the list already contained a user with that name");
+		}
+		
+		io.sockets.emit('new_user_attempt_result', {
+			nickname: data.name,
+			added: x});
+		
+	});
 
 });
 
- 	socket.on("disconnect", function (){
- 		for (i = 0; i < player_li.length; i++){
- 			if (player_li[i].id == socket.id){
- 				player_li.splice(i, 1)
- 			}
- 		}
-  		console.log(this.id + ' disconnected'); // this.id is the 'id' of the socket that got disconnected
-});
 
-});
+var users_that_didnt_join_a_game_yet = [];
+//x = new user("Jenkins",123);
+//var data = JSON.stringify(x);
+//users.push(data);
+var y = new user("Jenkins",123);
+users_that_didnt_join_a_game_yet.push(y);
+console.log(users_that_didnt_join_a_game_yet);
+function addNewUser(x){
+	//console.log(y);
+	console.log(users_that_didnt_join_a_game_yet[0]);
+	//var z = JSON.parse(x)
+	var z = new user(x.name,x.id);
+	//console.log(z);
+	//console.log(users[0]);
+	//console.log(user);
+	var N = users_that_didnt_join_a_game_yet.length;
+	var i = 0;
+	var test = 1;
+	for (i=0; i<N; i++){
+		if ( users_that_didnt_join_a_game_yet[i].name == z.name){
+			test = 0;
+		}
+	}
+	if (test){
+		users_that_didnt_join_a_game_yet.push(x);
+	}
+	return test;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
