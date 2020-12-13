@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Almendra+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap');
+
+body
+{
+    font-family: 'Nunito';
+}
+
+h2
+{
+    font-size: 18px;
+    padding: 10px 20px;
+    color: #575ed8;
+    
+}
+
+#mario-chat
+{
+    max-width: 600px;
+    margin: 30px auto;
+    border: 1px solid #ddd;
+    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+    border-radius: 2px;
+}
+
+#chat-window
+{
+    height: 400px;
+    overflow: auto;
+    background: #f9f9f9;
+}
+
+#output p
+{
+    padding: 14px 0px;
+    margin: 0 20px;
+    border-bottom: 1px solid #e9e9e9;
+    color: #555;
+}
+
+#feedback p
+{
+    color: #aaa;
+    padding: 14px 0px;
+    margin: 0 20px;
+}
+
+#output strong
+{
+    color: #575ed8;
+}
+
+label
+{
+    box-sizing: border-box;
+    display: block;
+    padding: 10px 20px;
+}
+
+input
+{
+    padding: 10px 20px;
+    box-sizing: border-box;
+    background: #eee;
+    border: 0;
+    display: block;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    font-family: Nunito;
+    font-size: 16px;
+}
+
+/*
+button
+{
+    background: #575ed8;
+    color: #fff;
+    font-size: 18px;
+    border: 0;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 0 0 2px 2px;
+}
+*/
+
+.top-heading {
+    margin-top: 35px;
+    width: 76%;
+    height: 5%;
+    line-height: 75px;
+    text-align: center;
+    border: 5px solid rgb(21, 9, 88);
+    border-radius: 8px;
+}
+
+#room-heading {
+    font-size: 32px;
+}
+
+#room-name {
+    color: rgb(230, 149, 0);
+    font-size: 14px;
+}
+
+#lobby-heading {
+    background-image: url('img/someSky.png');
+    background-size: cover;                      /* <------ */
+    background-repeat: no-repeat;
+    color: ivory;
+    font-family: 'Almendra Display', cursive;
+    font-size: 21px;
+}
+
+#lobby-bg {
+    color: ivory;
+    font-family: 'Almendra Display', cursive;
+    background-image: url('img/night_sky.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#rooms_container {
+    width: 80%;
+    display: inline-block;
+}
+
+.room {
+    position: relative;
+    width: 230px;
+    height: 225px;
+    float: left;
+    margin-left: 10.5%;
+    margin-top: 5%;
+    line-height: 50px;
+}
+
+.join {
+    border: 5px solid rgb(26, 27, 73);
+    border-radius: 8px;
+    height: 150px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-size: 24px;
+    font-weight: bolder;
+    color: rgb(255, 255, 255);
+}
+
+.numOfPlayers {
+    position: absolute;
+    bottom: 0;
+    left: 8px;
+    font-size: 22px;
+    font-weight: bolder;
+}
+
+#room-bg {
+    color: ivory;
+    font-family: 'Almendra Display', cursive;
+    background-image: url('img/room_bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#players-list {
+    border: 5px solid rgb(0, 0, 0);
+    border-radius: 8px;
+    width: 355px;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    font-family: 'Architects Daughter', cursive;
+    font-weight: bolder;
+    font-size: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
+hr {
+    border-top: 2px solid black;
+}
+
+.btn {
+    width: 250px;
+    height: 50px;
+    margin-top: 25px;
+    border: 5px solid rgb(0, 0, 0);
+    border-radius: 18px;
+    font-family: 'Architects Daughter', cursive;
+    font-weight: bolder;
+    font-size: 20px;
+
+}
