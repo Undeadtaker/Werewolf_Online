@@ -1,0 +1,39 @@
+<!-- VASSILI'S FILE -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lobby</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" type="text/css" href="source/style.css">
+</head>
+<body id="lobby-bg">
+	<center>
+		<div id="lobby-heading" class="top-heading">
+			<h1>Welcome to the werewolf game lobby, pick a room and play!</h1>
+		</div>
+		<div id="rooms_container">
+			<div class="room">
+				<div class="join" id = 'room1' style="background-image: url('source/img/chamber1.jpg');">
+					<center>Click to join!</center>
+				</div>
+				<div class="numOfPlayers"></div>
+			</div>
+			<div class="room">
+				<div class="join" style="background-image: url('source/img/chamber2.jpg');">
+					<center>Click to join!</center>
+				</div>
+				<div class="numOfPlayers">number of players: x/30</div>
+			</div>
+			<div class="room">
+				<div class="join" style="background-image: url('source/img/chamber3.jpg');">
+					<center>Click to join!</center>
+				</div>
+				<div class="numOfPlayers">number of players: x/30</div>
+			</div>
+		</div>
+	</center>
+	<script type="text/javascript" src="source/js/client.js"></script>
+</body>
+</html>
