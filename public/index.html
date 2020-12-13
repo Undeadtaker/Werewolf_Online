@@ -4,10 +4,11 @@
 	<meta charset="utf-8">
 	<meta name="author" content="Kodinger">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<title>My Login Page &mdash; Bootstrap 4 Login Page Snippet</title>
+	<title>Werewolf online</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="my-login.css">
+	<link rel="stylesheet" type="text/css" href="source/my-login.css">
 </head>
 <body class="my-login-page">
 	<section class="h-100">
@@ -15,7 +16,7 @@
 			<div class="row justify-content-md-center align-items-center h-100">
 				<div class="card-wrapper">
 					<div class="brand">
-						<img src="img/picture1.png" alt="bootstrap 4 login page">
+						<img src="source/img/picture1.png" alt="bootstrap 4 login page">
 					</div>
 					<div class="card fat">
 						<div class="card-body">
@@ -34,7 +35,7 @@
 								</div>
 
 								<div class="form-group m-0">
-									<button onclick="checkNickname();" class="btn btn-primary btn-block">
+									<button class="btn btn-primary btn-block" id = 'button'>
 										Enter lobby
 									</button>
 								</div>
@@ -51,6 +52,6 @@
 
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<!--<script src="my-login.js"></script>-->
-	<script src="script.js"></script>
+	<script src="source/js/script.js"></script>
 </body>
 </html>
