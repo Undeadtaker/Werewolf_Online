@@ -1,37 +1,47 @@
+
+// Generating a random ID 
+function generate() {
+  return '_' + Math.random().toString(36).substr(2, 9);
+};
+
 // Create socket connection
 var socket = io.connect('http://localhost:4000');
+var btn = document.getElementById('button');
 
-// Query DOM
-
-
-
-// Emit events
-function chat(){
-    var message = document.getElementById('message'),
-        handle = document.getElementById('handle');
-
-        socket.emit('chat', {
-		    message : message.value,
-		    handle : handle.value
-	});
+// Getting name from input and calling the redirect
+btn.addEventListener('click', function(){
+    if (document.getElementById("nickname").value == ''){
+        return alert('Field is empty');
+    }
+    localStorage.setItem("MyVariable", JSON.stringify({'name' : document.getElementById("nickname").value, 'id' : generate()}));
+    var x = JSON.parse(localStorage.getItem('MyVariable'));  // If you want to access nickname and id use this line!!!
+    document.getElementById("nickname").value = '';
+    socket.emit('lobby');
 }
+)
+
+// Redirect
+socket.on('lobby', function(data){
+    window.location.href = data;
+});
 
 
-function getNumberOfPlayers(){
-    socket.emit('get_number_of_players', {});
-}
 
 
-function getSession(){
-    socket.emit('get_session', {});
-}
 
-function newUser(x){
-    //var data = JSON.stringify(x);
-    socket.emit('new_user', {
-        name: x.name,
-        id: x.id});
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -280,5 +290,3 @@ function showNickname(){
     var nickname = localStorage.getItem('MyVariable');
     document.getElementById("nickname_box").innerHTML = nickname;
 }
-
-
