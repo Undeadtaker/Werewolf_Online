@@ -1,0 +1,33 @@
+<!-- VASSILI'S FILE -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Room X</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="source/style.css">
+</head>
+<body id="room-bg">
+	<center>
+		<div id="room-heading">
+			<h1>Werewolf Online</h1>
+        </div>
+        <div id="room-name">
+            <h1>Your room Name here</h1>
+        </div>
+
+        <input id="name" type="text" style="position: relative; width: 10%; left:0;" placeholder="Player">
+        <button id= "send" >Change name</button>
+
+		<div id="players-list">
+            <div>. . .</div><hr>
+
+        </div>
+        <button class="btn">READY!</button><br>
+	</center>
+
+    <script src="source/js/room.js"></script>
+
+</body>
+</html>
