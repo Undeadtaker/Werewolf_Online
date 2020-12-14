@@ -1,0 +1,132 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    background-color: #0D3B66;
+}
+
+.orange-header{
+    width: 100vw;
+    height: 18vh;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    background-color: #EE964B;
+}
+
+#elem-container{
+    display: flex;
+    flex-direction: row;
+
+    overflow: hidden;
+}
+
+.host-a-game-card{
+    width: 265px;
+    height: 170px;
+
+    margin: 22vh 5vw 0 3vw;
+
+    background-color: #FFFFFF;
+
+    border-radius: 5px;
+    box-shadow: 0px 10px 20px rgba(71, 67, 64, 0.5);
+
+    padding: 20px;
+}
+
+.host-a-game-card > img{
+    
+    margin: 50px 0 0 150px;
+    cursor: pointer;
+}
+
+.game-rooms-container-parent{
+    width: 70vw;
+    height: 85vh;
+
+    margin: 10vh 5vw 0 0;
+ 
+    background-color: #FFFFFF;
+
+    border-radius: 5px;
+    box-shadow: 0px 10px 20px rgba(71, 67, 64, 0.5);
+
+    padding: 20px;
+    z-index: 1000;
+
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+   
+::-webkit-scrollbar-thumb {
+    background: #888; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.game-rooms-container-parent > h3{
+    margin-bottom: 20px;
+}
+
+.game-rooms-container-child{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}  
+
+.room-card{
+    width: 200px;
+    height: 200px;
+
+    background-color: #5d778fc0;
+
+    border-radius: 5px;
+    text-align: center;
+
+    padding-top: 20px;
+
+    box-shadow: 0px 10px 20px rgba(71, 67, 64, 0.2);
+
+    animation: slide-up 0.4s ease-in;
+
+    cursor: pointer;
+}
+
+.room-card > p{
+    background-color: white;
+    margin-top: 100px;
+
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    cursor: pointer;
+}
+
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
