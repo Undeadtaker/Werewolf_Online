@@ -1,0 +1,101 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    background-color: #0D3B66;
+}
+
+.orange-header{
+    width: 100vw;
+    height: 18vh;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    background-color: #EE964B;
+}
+
+.elements-container{
+    width: 70vw;
+    min-width: 500px;
+    height: 80vh;
+    min-height: 500px;
+
+    position: relative;
+    top: 10vh;
+    left: 15%;
+
+    background-color: #FFFFFF;
+
+    border-radius: 5px;
+    box-shadow: 0px 10px 20px rgba(71, 67, 64, 0.5);
+
+    padding: 20px;
+    text-align: center;
+}
+
+#room-name{
+    margin-bottom: 10px;
+}
+
+#player-avatar-container{
+
+    width: 630px;
+    height: 50vh;
+    min-height: 300px;
+
+    position: absolute;
+    top: 100px;
+
+    left: 50%;
+    transform: translateX(-50%);
+
+    padding: 30px;
+
+    display: grid;
+    grid-template-columns: 180px 180px 180px;
+    grid-template-rows: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 10px;
+
+    overflow: auto;
+}
+
+.player-avatar{
+    width: 180px;
+    height: 40px;
+
+    border-radius: 20px;
+    text-align: center;
+    padding: 5px;
+}
+
+
+#ready{
+    width: 195px;
+    height: 37px;
+    
+    font-size: 16px;
+
+    position: absolute;
+    bottom: 5vh;
+
+    left: 50%;
+    transform: translateX(-50%);
+
+    border: 2px solid #5A748D;
+    border-radius: 5px;
+    background-color: #5A748D;
+    color: #FFFFFF;
+
+    outline: none;
+    cursor: pointer;
+
+    box-shadow: 3px 3px 3px rgba(71, 67, 64, 0.5);
+}
