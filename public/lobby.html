@@ -1,39 +1,32 @@
-<!-- VASSILI'S FILE -->
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<title>Lobby</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+    <meta charset="UTF-8">
+
+    <title>Werewolf Online</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
-	<link rel="stylesheet" type="text/css" href="source/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="source/game_lobby_style.css">
 </head>
-<body id="lobby-bg">
-	<center>
-		<div id="lobby-heading" class="top-heading">
-			<h1>Welcome to the werewolf game lobby, pick a room and play!</h1>
-		</div>
-		<div id="rooms_container">
-			<div class="room">
-				<div class="join" id = 'room1' style="background-image: url('source/img/chamber1.jpg');">
-					<center>Click to join!</center>
-				</div>
-				<div class="numOfPlayers"></div>
-			</div>
-			<div class="room">
-				<div class="join" style="background-image: url('source/img/chamber2.jpg');">
-					<center>Click to join!</center>
-				</div>
-				<div class="numOfPlayers">number of players: x/30</div>
-			</div>
-			<div class="room">
-				<div class="join" style="background-image: url('source/img/chamber3.jpg');">
-					<center>Click to join!</center>
-				</div>
-				<div class="numOfPlayers">number of players: x/30</div>
-			</div>
-		</div>
-	</center>
-	<script type="text/javascript" src="source/js/client.js"></script>
+
+<body>
+
+    <div class="orange-header"></div>
+    <div id="elem-container">
+        <div class="host-a-game-card">
+            <h3>Create a room</h3>
+            <img id="host-a-game" src="source/img/go_next.svg" alt="logo" />
+        </div>
+        <div class="game-rooms-container-parent">
+            <h3>Join a room</h3>
+            <div class="game-rooms-container-child"></div>
+        </div>
+    </div>
+ 
+    <script type="text/javascript" src="source/js/game_lobby_script.js"></script>
+    <script type="text/javascript" src="source/js/client.js"></script>
 </body>
+
 </html>
