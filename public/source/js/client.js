@@ -1,6 +1,5 @@
 var socket = io.connect('http://localhost:4000');
 
-
 // Sending a request every 1 second for the list update
 setInterval(function(){
     socket.emit('getPlayers')
@@ -17,9 +16,9 @@ socket.on('getPlayers', function(rooms){
 
 
 // Redirecting Players if they clicked the element
-var room = document.getElementById('room1');
-console.log(room)
-room.addEventListener('click', e => {
+var room = document.getElementsByClassName('room-card');
+console.log(room[0])
+room[0].addEventListener('click', e => {
 	socket.emit('room1');
 });
 
