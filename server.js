@@ -1,183 +1,83 @@
-var express = require('express');
-var socket = require('socket.io');
+
+
+var socket = io.connect('http://localhost:4000');
+
+// Open room.html to see the id of these tags
+var button = document.getElementById('send');
+var List = document.getElementById('players-list');
+var ready = document.getElementById('ready');
+var name = JSON.parse(localStorage.getItem('MyVariable'))['name'];
+
+
+
+
+// on connect give id of player 
+socket.on('connect', () => {
+	socket.emit('giveID', [socket.id, name]);
+ });
+
+
+
+// TODO: Write javascript that says if the name is not equal to Player, the change Name dissapears
+// Create a evenet listener that changes the name of the player
+button.addEventListener('click', function(){
+  socket.emit('changeName', document.getElementById("name").value);
+  document.getElementById("name").value= "";
+});
+
+// send ready to server
+ready.addEventListener('click', function(){
+  socket.emit('ready');
+});
 
 
 
 
 
 
-//  ---------- SERVER SIDE ----------
 
 
-// Player class
-class Player {
-  constructor(name, id, ready) {
-    this.name = name;
-    this.id = id;
-    this.ready = ready;
-  }
-}
+// Get list of player names (updates every second)
+setInterval(function(){
+    socket.emit('getNames')
+},1000);
 
+socket.on('getNames', function(data){
+	List.innerHTML = '';
 
-// variables
-player_li = []
-
-// redirections 
-var destination = ['/lobby.html', '/room.html'];
-
-
-// functions
-
-// TODO I have to implement a way to make sure that every time this function is called that
-// it doesn't go through the list again, but just retruns a value.
-function check(li){
-	all_ready = false
-
-	for (i = 0; i < li.length; i++){
-		if(li[i].ready == false){
-			all_ready = false;
-		}	
-		else{
-			all_ready = true;
-		}	
-	}
-	if (li.length >= 6 && all_ready == true){
-		console.log('The game starts soon!')
-		return ('start');
+	for (i = 0; i < data.length; i++){
+		if (socket.id == data[i].id){
+			if (data[i].ready == true){
+				ready.innerHTML = "waiting for others";
+			}
+			if (data[i].ready == false){
+				ready.innerHTML = "READY";
+			}
+			hr = document.createElement('hr');
+			yourDiv = document.createElement('div');
+			yourDiv.setAttribute("id", "yourDiv");
+			yourDiv.innerHTML = data[i].name;
+			List.appendChild(yourDiv);
+			List.appendChild(hr)
 		}
-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// App setup
-var app = express();
-var server = app.listen(4000, function(){
-    console.log('listening for requests on port 4000,');
+		else{
+			hr = document.createElement('hr');
+			element = document.createElement('div');
+			element.innerHTML = data[i].name;
+			List.appendChild(element);
+			List.appendChild(hr)
+		}
+	}
 });
 
-// Static files
-app.use(express.static('public'));
-
-
-
-//--------------------------------------- SOCKET ----------------------------------------// 
-
-
-// Socket setup & pass server
-var io = socket(server);
-io.on('connection', (socket) => {
-    console.log('made socket connection', socket.id);
-
-
-// LOGIN FUNCTIONS
-
-	// Redirect player once it has it's name and ID in localstorage
-	socket.on('lobby', function(){
-		socket.emit('lobby', destination[0])
-	});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// LOBBY FUNCTIONS
-
-    // Sending all sockets in the lobby to inform them about the number of players in each room
-    socket.on('getPlayers', function(){
-        socket.emit('getPlayers', player_li.length);
-    });
-	
-
-
-// ROOM1 FUNCTIONS
-
-    // Joining room1
-    socket.on('giveID', function(data){
-    	let player = new Player(data[1], data[0], false);
-    	player_li.push(player)
-    	socket.join('room1');
-
-    	console.log(player_li)
-    	for (i = 0; i < player_li.length; i++){
-    		player_li[i].ready = false;
-    	}
-    });
-
-    // Function that changes the name of the player who sent the request
-    socket.on('changeName', function(name){
-    	for (i = 0; i < player_li.length; i++){
-    		if (player_li[i].id == socket.id){
-    			player_li[i].name = name;
-    		}
-    	}
-    });
-
-    // Sending all sockets in the room the names of the players
-    socket.on('getNames', function(){
-        socket.emit('getNames', player_li);
-    });
-
-    // Setting the ready attribute of Player
-    socket.on('ready', function(){
-        for (i = 0; i < player_li.length; i++){
-    		if (player_li[i].id == socket.id){
-    			player_li[i].ready = true;
-    		}
-    	}
-    	if (check(player_li) == 'start'){
-    		console.log('server side ready');
-    		io.to('room1').emit('START');
-
-    	};
-    });
-
-
-
-
-
-
-
-
-
-    // redirecting player to room1, must be bellow socket.on 'giveID'
-    socket.on('room1', function(data){
-    	socket.emit('redirect', destination[1])
-
+// Printing start on everyone ready
+socket.on('START', function(){
+	console.log('GAME IS READY TO BEGIN!!!')
 });
 
- 	socket.on("disconnect", function (){
- 		for (i = 0; i < player_li.length; i++){
- 			if (player_li[i].id == socket.id){
- 				player_li.splice(i, 1)
- 			}
- 		}
-  		console.log(this.id + ' disconnected'); // this.id is the 'id' of the socket that got disconnected
-});
 
-});
+
+
 
 
