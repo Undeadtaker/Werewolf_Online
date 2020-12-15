@@ -1,144 +1,181 @@
 var express = require('express');
 var socket = require('socket.io');
-// --------------------------------------------------- THE SERVER SIDE --------------------------------------------------- //
+
+
+
+
+
+
+//  ---------- SERVER SIDE ----------
+
+
+// Player class
+class Player {
+  constructor(name, id, ready) {
+    this.name = name;
+    this.id = id;
+    this.ready = ready;
+  }
+}
+
+
+// variables
+player_li = []
+
+// redirections 
+var destination = ['/lobby.html', '/room.html'];
+
+
+// functions
+
+// TODO I have to implement a way to make sure that every time this function is called that
+// it doesn't go through the list again, but just retruns a value.
+function check(li){
+	all_ready = false
+
+	for (i = 0; i < li.length; i++){
+		if(li[i].ready == false){
+			all_ready = false;
+		}	
+		else{
+			all_ready = true;
+		}	
+	}
+	if (li.length >= 6 && all_ready == true){
+		console.log('The game starts soon!')
+		return ('start');
+		}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // App setup
 var app = express();
 var server = app.listen(4000, function(){
-	console.log('Listening to new connections on port 4000');
-}); // listen to port number
+    console.log('listening for requests on port 4000,');
+});
 
-// Directory for static files
+// Static files
 app.use(express.static('public'));
 
-// Socket setup
+
+
+//--------------------------------------- SOCKET ----------------------------------------// 
+
+
+// Socket setup & pass server
 var io = socket(server);
-// Open room.html to see the id of these tags
-//var button = document.getElementById('send');
-//var List = document.getElementById('players-list');
-//var ready = document.getElementById('ready');
-//var name = JSON.parse(localStorage.getItem('MyVariable'))['name'];
+io.on('connection', (socket) => {
+    console.log('made socket connection', socket.id);
+
+
+// LOGIN FUNCTIONS
+
+	// Redirect player once it has it's name and ID in localstorage
+	socket.on('lobby', function(){
+		socket.emit('lobby', destination[0])
+	});
 
 
 
 
-// on connect give id of player 
-socket.on('connect', () => {
-	socket.emit('giveID', [socket.id, name]);
- });
 
 
 
-// TODO: Write javascript that says if the name is not equal to Player, the change Name dissapears
-// Create a evenet listener that changes the name of the player
-button.addEventListener('click', function(){
-  socket.emit('changeName', document.getElementById("name").value);
-  document.getElementById("name").value= "";
+
+
+
+
+
+
+
+
+
+// LOBBY FUNCTIONS
+
+    // Sending all sockets in the lobby to inform them about the number of players in each room
+    socket.on('getPlayers', function(){
+        socket.emit('getPlayers', player_li.length);
+    });
+	
+
+
+// ROOM1 FUNCTIONS
+
+    // Joining room1
+    socket.on('giveID', function(data){
+    	let player = new Player(data[1], data[0], false);
+    	player_li.push(player);
+    	socket.join('room1');
+        io.to('room1').emit('getNames', player_li);
+
+    	console.log(player_li)
+    	for (i = 0; i < player_li.length; i++){
+    		player_li[i].ready = false;
+    	}
+    });
+
+    // Function that changes the name of the player who sent the request
+    socket.on('changeName', function(name){
+    	for (i = 0; i < player_li.length; i++){
+    		if (player_li[i].id == socket.id){
+    			player_li[i].name = name;
+                io.to('room1').emit('getNames', player_li);
+    		}
+    	}
+    });
+
+    // Setting the ready attribute of Player
+    socket.on('ready', function(){
+        for (i = 0; i < player_li.length; i++){
+    		if (player_li[i].id == socket.id){
+    			player_li[i].ready = true;
+                io.to('room1').emit('getNames', player_li);
+    		}
+    	}
+    	if (check(player_li) == 'start'){
+    		console.log('server side ready');
+    		io.to('room1').emit('START');
+
+    	};
+    });
+
+
+
+
+
+
+
+
+
+    // redirecting player to room1, must be bellow socket.on 'giveID'
+    socket.on('room1', function(data){
+    	socket.emit('redirect', destination[1])
+
 });
 
-// send ready to server
-ready.addEventListener('click', function(){
-  socket.emit('ready');
+ 	socket.on("disconnect", function (){
+ 		for (i = 0; i < player_li.length; i++){
+ 			if (player_li[i].id == socket.id){
+ 				player_li.splice(i, 1)
+ 			}
+ 		}
+  		console.log(this.id + ' disconnected'); // this.id is the 'id' of the socket that got disconnected
 });
 
-
-
-
-
-
-
-
-// Get list of player names (updates every second)
-setInterval(function(){
-    socket.emit('getNames')
-},1000);
-
-socket.on('getNames', function(data){
-	List.innerHTML = '';
-
-	for (i = 0; i < data.length; i++){
-		if (socket.id == data[i].id){
-			if (data[i].ready == true){
-				ready.innerHTML = "waiting for others";
-			}
-			if (data[i].ready == false){
-				ready.innerHTML = "READY";
-			}
-			hr = document.createElement('hr');
-			yourDiv = document.createElement('div');
-			yourDiv.setAttribute("id", "yourDiv");
-			yourDiv.innerHTML = data[i].name;
-			List.appendChild(yourDiv);
-			List.appendChild(hr)
-		}
-
-		else{
-			hr = document.createElement('hr');
-			element = document.createElement('div');
-			element.innerHTML = data[i].name;
-			List.appendChild(element);
-			List.appendChild(hr)
-		}
-	}
 });
-
-// Printing start on everyone ready
-socket.on('START', function(){
-	console.log('GAME IS READY TO BEGIN!!!')
-});
-
-
-
-
-
-class user {
-  constructor(name,ID) {
-    this.id = ID;
-    this.name = name;
-    this.role = null;
-  }
-}
-
-// Generating a random ID 
-function generate() {
-  return '_' + Math.random().toString(36).substr(2, 9);
-};
-
-
-
-// DUMMY LIST OF PLAYERS
-listOfPlayersNames = ['Marwin','Abdulkader','Luc','JP','Vasilli','Akash','Filip','GoogleBurger','El Chupacabra','Wumpus'];
-listOfPlayers = [];
-var i = 0;
-var player;
-var id;
-for (i=0;i<listOfPlayersNames.length;i++){
-    id = generate();
-    player = new user(listOfPlayersNames[i],id);
-    listOfPlayers.push(player);
-}
-
-listOfPlayersIDs = [];
-for (i=0;i<listOfPlayers.length;i++){
-    listOfPlayersIDs.push(listOfPlayers[i].id);
-}
-
-
-listOfRoles = ['werewolf','werewolf','werewolf','villager','villager','villager','hunter','seer','witch','cupid'];
-
-function assignRoles(players,roles){
-    var index;
-	for (i=0;i<players.length;i++){
-        index = Math.floor(Math.random()*roles.length);
-        players[i].role = roles[index];
-        alert(players[i].name+" is "+roles[index]);
-        roles.splice(index,1);
-        
-    }
-}
-
-assignRoles(listOfPlayers,listOfRoles);
-
-
 
 
