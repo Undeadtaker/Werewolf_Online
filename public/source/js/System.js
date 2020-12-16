@@ -8,8 +8,70 @@ function shuffle(a) {
   }
   return a;
 }
+//Cupid, Seer, WW, WhiteWW, Witch, Villager, Hunter,
+//ids = list
+//names= list
+//game= string
+function create(ids,names,gameid){
+  var ng = new Game(gameid);
+  if (ids.length < 12){
+    var roles=["WW","WW","Seer","Witch","Hunter","Cupid"];
+    for (i = 0; i < (ids.length - 6); i++) {
+      roles.push("Villager");
+      }
+  }else if((ids.length > 11 && ids.length < 18)){
+    var roles=["WW","WW","WW","Seer","Witch","Hunter","Cupid"];
+    for (i = 0; i < (ids.length - 7); i++) {
+      roles.push("Villager");
+      }
+  }else if((ids.length > 17 )){
+    var roles=["WW","WW","WW", "WW","Seer","Witch","Hunter","Cupid"];
+    for (i = 0; i < (ids.length - 8); i++) {
+      roles.push("Villager");
+      }
+  }
+  shuffled=shuffle(roles);
+  for (i = 0; i < (ids.length); i++){
+    var np = new GamePlayer(ng, ids[i], names[i], shuffled[i]);
+    np.checkwitch();
+    console.log("np.id display role ");
+    ng.addplayer(np);
+    ng.Roles.push(np.role);
+    ////////
+  }
+}
 
-
+class GamePlayer{
+  constructor(game,id, name, role){
+    this.game=game;
+    this.id=id;
+    this.name=name;
+    this.role=role;
+    this.status=0; //alive=0, selected=1, dead=2;
+    this.lovebird=false;
+    this.killpotion=false;
+    this.savepotion=false;
+  }
+  checkwitch(){
+    if (this.role=="Witch"){
+      this.killpotion=true;
+      this.savepotion=true;
+    }
+  }
+  seeRole(){
+    return this.role;
+  }
+  killplayer(x){
+    x.status=1;
+  }
+  vote(x){
+    this.game.Votes.push(x);
+  }
+  wwvote(x){
+    this.game.wwVotes.push(x);
+  }
+}
+/*
 class Player{
   constructor(name,game){
     this.game=game
@@ -34,16 +96,27 @@ class Player{
   }
 }
 
+class Room {
+  constructor(id,maxnumber){
+    this.id=id;
+    this.maxnumber=maxnumber;
+    this.Players=[];
+  }
+  addplayer(playerid,name){
+    var nplayer = new Player(playerid,this);
+    this.Players.push(nplayer);
+  }
+}
+
 //------------------------------------------------------------------------------
-
-
+*/
 
 class Game{
   constructor(name){
     this.Name = name;
     this.Players=[];
     this.Dead=[];
-    this.Status=0; //lobby=0, running=1, ended=2,
+    //this.Status=0; //lobby=0, running=1, ended=2,
     this.Roles=[];
     this.Winners=[];
     this.Losers=[];
@@ -52,9 +125,8 @@ class Game{
     this.Phases=0; //0=setup, 1=Cupid, 2=seer, 3=WW, 4=WhiteWW, 5=Witch, 6=Day, 61=Hunter, 62=lovers
     this.Nights=0,
   }
-  addplayer(playerid,name){
-    var nplayer = new Player(playerid,this);
-    this.Players.push(nplayer);
+  addplayer(player){
+    this.Players.push(player);
   }
   deleteplayer(playerid){
     this.Players.pop(playerid);
