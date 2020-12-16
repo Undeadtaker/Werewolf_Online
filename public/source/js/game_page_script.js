@@ -3,14 +3,14 @@ var socket = io.connect('http://localhost:4000');
 
 
 // function tocreate player avatar/ card
-function create_player_card(player_name) {
+function create_player_card(player_name, id, role) {
 
     let avatar_container = document.getElementsByClassName("player-card-container")[0];
 
 
     const card = document.createElement("div");
     card.isSelected = false;
-
+    card.id = id
     card.classList.add("card");
 
     // initiating the tick sign and adding properties
@@ -61,6 +61,17 @@ function create_player_card(player_name) {
 
 }
 
+function display_self(){
+    room = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
+    socket.emit('show_players', room)
+    socket.on('show_players', function(data){
+        for (i=0;i < data.length; i++){
+            create_player_card(data[i].name, data[i].id, data[i].role)
+        }
+    });
+}
+
+
 // next button 
 const next_button = document.getElementById("next-btn");
 
@@ -84,4 +95,4 @@ function update_subtitle(text){
 }
 
 
-socket.emit
+

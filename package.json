@@ -1,0 +1,29 @@
+{
+  "name": "Werewolf_Online",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "socket.io": "^3.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Undeadtaker/Werewolf_Online.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Undeadtaker/Werewolf_Online/issues"
+  },
+  "homepage": "https://github.com/Undeadtaker/Werewolf_Online#readme"
+}

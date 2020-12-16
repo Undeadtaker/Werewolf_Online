@@ -24,6 +24,8 @@ class Room {
         this.id = id;
         this.max_players = max_players;
         this.Players = [];
+        this.game_data = null;
+        
 }
 
 addplayer(playerid,name){
@@ -53,15 +55,10 @@ function check(li){
 		if(li[i].ready == false){
             all_ready = false;
             console.log(li[i].name+ " Not ready!")
+            return
 		}	
-		else{
-			all_ready = true;
-		}	
-	}
-	if (li.length >= 2 && all_ready == true){
-		console.log('The game starts soon!')
-		return ('start');
-		}
+    }
+    return 'start';
 }
 
 
@@ -76,6 +73,13 @@ function deleteRoom(room){
     }
 }
 
+function get_roomBy_ID(room_id){
+    for (i = 0; i < rooms.length; i++){
+            
+        if (rooms[i].id == room_id){
+            return rooms[i]
+        }
+}
 
 
 // App setup
@@ -167,7 +171,9 @@ io.on('connection', (socket) => {
         let room_id = data[0]
         for (i = 0; i < rooms.length; i++){
             
-            if (rooms[i].id == data[0]) {
+            if (rooms[i].id == room_id) {
+             
+            
                 for (j = 0; j < rooms[i].Players.length; j++) {
                     if (rooms[i].Players[j].id == data[1]){
                         rooms[i].Players[j].ready = true;
@@ -176,6 +182,7 @@ io.on('connection', (socket) => {
                         console.log(rooms[i].Players);
                         //socket.emit('checked', check(rooms[i].Players))
                         player_li = rooms[i].Players
+                        game_room = i
                     }
                 }
             }
@@ -185,7 +192,18 @@ io.on('connection', (socket) => {
     		console.log('server side ready');
             //io.to('room1').emit('START');
             let sth = [room_id, destination[3]]
+            let pid = []
+            let p_names = []
+            for (i=0; i< player_li.length ; i++){
+                pid.push(player_li[i].id)
+                p_names.push(player_li[i].name)
+            }
             io.sockets.emit('START', sth);
+            
+            rooms[game_room].game_data = create(pid, p_names, room_id)
+            console.log("player Id: "+pid)
+            console.log("player names: "+p_names)
+            //console.log("New game Object" + rooms[game_room].game_data)
         }
         else {
             console.log("All players not ready")
@@ -197,7 +215,10 @@ io.on('connection', (socket) => {
         
    // });
 
-    // TODO
+    socket.on('show_players', function(data){
+        let room = get_roomBy_ID(data)
+        socket.emit('show_players', room.game_data.Players)
+    });
 
 // HOST FUNCTIONS
 
@@ -244,10 +265,10 @@ io.on('connection', (socket) => {
             current = rooms[i];
             for (j = 0; j < current.Players.length; j++){
                 if (current.Players[j].socket == socket.id){
-                    console.log('List of Names ', current.Players);
+                    //console.log('List of Names ', current.Players);
                     current.Players.splice(j, 1);
                     for (i = 0; i < current.Players.length; i++){
-                    console.log(current.Players);
+                    //console.log(current.Players);
                     io.to(current.Players[i].socket).emit('getNames', current.Players);
                     }
                 }
@@ -256,3 +277,116 @@ io.on('connection', (socket) => {
         console.log(socket.id, ' Disconnected');
   });
 });
+
+
+
+//-------------------------------------------------system.js---------------
+
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      x = a[i];
+      a[i] = a[j];
+      a[j] = x;
+    }
+    return a;
+  }
+  //Cupid, Seer, WW, WhiteWW, Witch, Villager, Hunter,
+  //ids = list
+  //names= list
+  //game= string
+function create(ids,names,gameid){
+    var ng = new Game(gameid);
+    if (ids.length < 12){
+      var roles=["WW","WW","Seer","Witch","Hunter","Cupid"];
+      for (i = 0; i < (ids.length - 6); i++) {
+        roles.push("Villager");
+        }
+    }else if((ids.length > 11 && ids.length < 18)){
+      var roles=["WW","WW","WW","Seer","Witch","Hunter","Cupid"];
+      for (i = 0; i < (ids.length - 7); i++) {
+        roles.push("Villager");
+        }
+    }else if((ids.length > 17 )){
+      var roles=["WW","WW","WW", "WW","Seer","Witch","Hunter","Cupid"];
+      for (i = 0; i < (ids.length - 8); i++) {
+        roles.push("Villager");
+        }
+    }
+    shuffled=shuffle(roles);
+    for (i = 0; i < (ids.length); i++){
+      var np = new GamePlayer(ng, ids[i], names[i], shuffled[i]);
+      np.checkwitch();
+      console.log("np.id display role ");
+      ng.addplayer(np);
+      ng.Roles.push(np.role);
+      ////////
+    }
+    return ng;
+
+  }
+  
+class GamePlayer{
+    constructor(game,id, name, role){
+      this.game=game;
+      this.id=id;
+      this.name=name;
+      this.role=role;
+      this.status=0; //alive=0, selected=1, dead=2;
+      this.lovebird=false;
+      this.killpotion=false;
+      this.savepotion=false;
+    }
+    checkwitch(){
+      if (this.role=="Witch"){
+        this.killpotion=true;
+        this.savepotion=true;
+      }
+    }
+    seeRole(){
+      return this.role;
+    }
+    killplayer(x){
+      x.status=1;
+    }
+    vote(x){
+      this.game.Votes.push(x);
+    }
+    wwvote(x){
+      this.game.wwVotes.push(x);
+    }
+  }
+  
+  
+class Game{
+    constructor(name){
+      this.Name = name;
+      this.Players=[];
+      this.Dead=[];
+      //this.Status=0; //lobby=0, running=1, ended=2,
+      this.Roles=[];
+      this.Winners=[];
+      this.Losers=[];
+      this.Votes=[];
+      this.wwVotes=[];
+      this.Phases=0; //0=setup, 1=Cupid, 2=seer, 3=WW, 4=WhiteWW, 5=Witch, 6=Day, 61=Hunter, 62=lovers
+      this.Nights=0;
+    }
+    addplayer(player){
+      this.Players.push(player);
+    }
+    deleteplayer(playerid){
+      this.Players.pop(playerid);
+    }
+    killplayer(x){
+      x.status=2;
+      this.Dead.push(x);
+    }
+    printnames(){
+      console.log(this.Players);
+      return this.Players;
+    }
+  }
+
+}
