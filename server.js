@@ -80,6 +80,7 @@ function get_roomBy_ID(room_id){
             return rooms[i]
         }
 }
+}
 
 
 // App setup
@@ -215,9 +216,20 @@ io.on('connection', (socket) => {
         
    // });
 
+    //
     socket.on('show_players', function(data){
         let room = get_roomBy_ID(data)
-        socket.emit('show_players', room.game_data.Players)
+
+        let pid = []
+        let p_names = []
+        for (i=0; i< player_li.length ; i++){
+            pid.push(player_li[i].id)
+            p_names.push(player_li[i].name)
+        }
+
+        console.log(room.id + ":RoomID")
+        socket.emit('show_players', room.Players)
+        
     });
 
 // HOST FUNCTIONS
@@ -389,4 +401,4 @@ class Game{
     }
   }
 
-}
+    
