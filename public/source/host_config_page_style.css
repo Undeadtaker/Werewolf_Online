@@ -1,0 +1,119 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    background-color: #0D3B66;
+}
+
+.orange-header{
+    width: 100vw;
+    height: 18vh;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    background-color: #EE964B;
+}
+
+.config-container{
+    width: 70vw;
+    min-width: 500px;
+    height: 80vh;
+    min-height: 500px;
+
+    position: relative;
+    top: 10vh;
+    left: 15%;
+
+    color: #FFFFFF;
+    background-color: #FFFFFF;
+
+    border-radius: 5px;
+    box-shadow: 0px 10px 20px rgba(71, 67, 64, 0.5);
+
+    padding: 20px;
+}
+
+.config-and-btn {
+    position: relative;
+    top: 30px;
+    left: 50px;
+    width: 410px;
+    height: 230px;
+}
+
+.config-form {
+    width: 410px;
+    height: 170px;
+    background-color: #5A748D;
+    border-radius: 5px;
+    box-shadow: 0px 3px 3px rgba(71, 67, 64, 0.5);
+}
+
+input {
+    border: none;
+    border-radius: 2px;
+    height: 25px;
+}
+
+.input-container {
+    position: relative;
+    width: 75%;
+    height: 75%;
+    top: 30px;
+    left: 25px;
+}
+
+#room-name {
+    margin-left: 10px;
+    width: 180px;
+}
+
+#max-num-of-player {
+    text-align: center;
+    width: 58px;
+}
+
+.btn {
+    border: none;
+    background-color: #5A748D;
+    color: #FFFFFF;
+    border-radius: 5px;
+}
+
+#customize_btn {
+    margin-top: 30px;
+    width: 50%;
+    height: 37px;
+    box-shadow: 0px 3px 3px rgba(71, 67, 64, 0.5);
+    opacity: 0;
+}
+
+#host-game_btn {
+
+    width: 195px;
+    height: 37px;
+    
+    font-size: 16px;
+
+    position: absolute;
+    bottom: 15%;
+
+    left: 50%;
+    transform: translateX(-50%);
+    
+}
+
+#go-back
+{
+    position: absolute;
+    margin-top: 28%;
+    background-color: red;
+}
