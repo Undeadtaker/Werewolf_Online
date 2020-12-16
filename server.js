@@ -8,22 +8,41 @@ var socket = require('socket.io');
 
 //  ---------- SERVER SIDE ----------
 
+//  ---------- CLASSES ---------- //
 
 // Player class
 class Player {
-  constructor(name, id, ready) {
+  constructor(name, id, ready, socket_id) {
     this.name = name;
     this.id = id;
     this.ready = ready;
+    this.socket = socket_id;
   }
 }
 
 
-// variables
+class Room {
+    constructor(name, id, max_players){
+        this.name = name;
+        this.id = id;
+        this.max_players = max_players;
+        this.Players = [];
+}
+
+addplayer(playerid,name){
+    var nplayer = new Player(playerid,this);
+    this.Players.push(nplayer);
+    }
+} 
+
+
+//  ---------- VARIABLES ---------- //
+
+rooms = []
 player_li = []
 
 // redirections 
-var destination = ['/lobby.html', '/room.html'];
+var destination = ['/lobby.html', '/room.html', '/host.html'];
 
 
 // functions
@@ -48,16 +67,16 @@ function check(li){
 }
 
 
-
-
-
-
-
-
-
-
-
-
+// Checking all the rooms and their Players list, if no one connects for more than 10 seconds,
+// it gets deleted 
+function deleteRoom(room){
+    if (room.Players === undefined || room.Players.length == 0) {
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
 
 
 
@@ -92,50 +111,63 @@ io.on('connection', (socket) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 // LOBBY FUNCTIONS
 
     // Sending all sockets in the lobby to inform them about the number of players in each room
-    socket.on('getPlayers', function(){
-        socket.emit('getPlayers', player_li.length);
+    socket.on('getRooms', function(){
+        socket.emit('getRooms', rooms);
     });
 	
-
-
-// ROOM1 FUNCTIONS
-
-    // Joining room1
-    socket.on('giveID', function(data){
-    	let player = new Player(data[1], data[0], false);
-    	player_li.push(player);
-    	socket.join('room1');
-        io.to('room1').emit('getNames', player_li);
-
-    	console.log(player_li)
-    	for (i = 0; i < player_li.length; i++){
-    		player_li[i].ready = false;
-    	}
+    // Redirect to host
+    socket.on('host', function(){
+        socket.emit('host', destination[2]);
     });
 
+
+
+
+
+// ROOM FUNCTIONS
+
+
+    // Joining room data[0] - player name, data[1] - player ID, data[2] - id of room joined. data[3] - socket.id
+    socket.on('giveID', function(data){
+        console.log(data);
+        var room;
+        for (i = 0; i < rooms.length; i++){
+            if (data[2] == rooms[i].id){
+                room = rooms[i];
+
+                let player = new Player(data[0], data[1],  false, data[3]);
+                room.Players.push(player);
+
+                // The ready buttons resets once someone new joins the game, makes infinite loop
+                // for (i = 0; i < room.Players; i++){
+                //     room.Players[i].ready = false;
+                // }
+            }
+        }
+        for (i = 0; i < room.Players.length; i++){
+            io.to(room.Players[i].socket).emit('getNames', room.Players);
+        }
+});
+
     // Function that changes the name of the player who sent the request
-    socket.on('changeName', function(name){
-    	for (i = 0; i < player_li.length; i++){
-    		if (player_li[i].id == socket.id){
-    			player_li[i].name = name;
-                io.to('room1').emit('getNames', player_li);
-    		}
-    	}
+    socket.on('changeName', function(data){
+        for (i = 0; i < rooms.length; i++){
+            current = rooms[i];
+            for (j = 0; j < current.Players.length; j++){
+                console.log('testing ', current.Players[j].name, data[0]);
+                if (current.Players[j].id == data[1]){
+                    console.log('List of Names ', current.Players);
+                    current.Players[j].name = data[0];
+                    for (i = 0; i < current.Players.length; i++){
+                        console.log(current.Players);
+                        io.to(current.Players[i].socket).emit('getNames', current.Players);
+                    }
+                }
+            }
+        }
     });
 
     // Setting the ready attribute of Player
@@ -154,6 +186,49 @@ io.on('connection', (socket) => {
     });
 
 
+// HOST FUNCTIONS
+
+    socket.on('createRoom', function(data){
+        socket.emit('lobby', destination[0]);
+        let room = new Room(data[0], data[1], data[2]);
+        rooms.push(room);
+});
+// Doesn't work as inteded, because once more rooms are created, the timer doubles in speed.
+// TODO: create a seperate timer somehow that checks and runs for each room added. 
+
+    //     timer = 0;
+    //     var myTimer = setInterval(function(){
+    //         deleteRoom(room);
+    //         if (deleteRoom(room) == 1){
+    //             timer += 1;
+    //             if (room.Players.length != 0){
+    //                 clearInterval(myTimer);
+    //                 timer = 0;
+    //             }
+    //             if (timer == 10){
+    //                 clearInterval(myTimer);
+    //                 timer = 0;
+    //                 for (i = 0; i < rooms.length; i++){
+    //                     if (room.id == rooms[i].id){
+    //                         rooms.splice(i, 1);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         console.log(timer);
+    //     },1000);
+
+    // });
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -162,52 +237,29 @@ io.on('connection', (socket) => {
 
 
     // redirecting player to room1, must be bellow socket.on 'giveID'
-    socket.on('room1', function(data){
+    socket.on('roomRedirect', function(){
     	socket.emit('redirect', destination[1])
-
-});
-
- 	socket.on("disconnect", function (){
- 		for (i = 0; i < player_li.length; i++){
- 			if (player_li[i].id == socket.id){
- 				player_li.splice(i, 1)
- 			}
- 		}
-  		console.log(this.id + ' disconnected'); // this.id is the 'id' of the socket that got disconnected
-});
-
 });
 
 
-// DUMMY LIST OF PLAYERS
-listOfPlayersNames = ['Marwin','Abdulkader','Luc','JP','Vasilli','Akash','Filip','GoogleBurger','El Chupacabra','Wumpus'];
-listOfPlayers = [];
-var i = 0;
-var player;
-var id;
-for (i=0;i<listOfPlayersNames.length;i++){
-    id = generate();
-    player = new user(listOfPlayersNames[i],id);
-    listOfPlayers.push(player);
-}
+ 	socket.on('disconnect', () => {
+        for (i = 0; i < rooms.length; i++){
+            current = rooms[i];
+            for (j = 0; j < current.Players.length; j++){
+                if (current.Players[j].socket == socket.id){
+                    console.log('List of Names ', current.Players);
+                    current.Players.splice(j, 1);
+                    for (i = 0; i < current.Players.length; i++){
+                    console.log(current.Players);
+                    io.to(current.Players[i].socket).emit('getNames', current.Players);
+                    }
+                }
+            }
+        }
+        console.log(socket.id, ' Disconnected');
+  });
 
-listOfPlayersIDs = [];
-for (i=0;i<listOfPlayers.length;i++){
-    listOfPlayersIDs.push(listOfPlayers[i].id);
-}
+
+});
 
 
-listOfRoles = ['werewolf','werewolf','werewolf','villager','villager','villager','hunter','seer','witch','cupid'];
-
-function assignRoles(players,roles){
-    var index;
-	for (i=0;i<players.length;i++){
-        index = Math.floor(Math.random()*roles.length);
-        players[i].role = roles[index];
-        alert(players[i].name+" is "+roles[index]);
-        roles.splice(index,1);
-        
-    }
-}
-
-assignRoles(listOfPlayers,listOfRoles);
