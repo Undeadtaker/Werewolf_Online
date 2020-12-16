@@ -2,6 +2,7 @@ var express = require('express');
 var socket = require('socket.io');
 
 
+
 //  ---------- SERVER SIDE ----------
 
 //  ---------- CLASSES ---------- //
@@ -15,6 +16,7 @@ class Player {
     this.socket = socket_id;
   }
 }
+
 
 class Room {
     constructor(name, id, max_players){
@@ -42,7 +44,7 @@ var destination = ['/lobby.html', '/room.html', '/host.html'];
 
 // functions
 
-// TODO I have to implement a way to make sure that every time this function is called that
+// TODO You have to implement a way to make sure that every time this function is called that
 // it doesn't go through the list again, but just retruns a value.
 function check(li){
 	all_ready = false
@@ -60,6 +62,7 @@ function check(li){
 		return ('start');
 		}
 }
+
 
 // Checking all the rooms and their Players list, if no one connects for more than 10 seconds,
 // it gets deleted 
@@ -81,7 +84,6 @@ var server = app.listen(4000, function(){
 
 // Static files
 app.use(express.static('public'));
-
 
 
 //--------------------------------------- SOCKET ----------------------------------------// 
@@ -113,9 +115,8 @@ io.on('connection', (socket) => {
         socket.emit('host', destination[2]);
     });
 
-	
-// ROOM FUNCTIONS
 
+// ROOM FUNCTIONS
 
     // Joining room data[0] - player name, data[1] - player ID, data[2] - id of room joined. data[3] - socket.id
     socket.on('giveID', function(data){
@@ -127,13 +128,14 @@ io.on('connection', (socket) => {
 
                 let player = new Player(data[0], data[1],  false, data[3]);
                 room.Players.push(player);
-
                 // The ready buttons resets once someone new joins the game, makes infinite loop
                 // for (i = 0; i < room.Players; i++){
                 //     room.Players[i].ready = false;
                 // }
             }
         }
+        // IMPORTANT NOTE, the server gets an error when there are people in rooms left over, 
+        // you should probably put a conditional here to check whether room is none
         for (i = 0; i < room.Players.length; i++){
             io.to(room.Players[i].socket).emit('getNames', room.Players);
         }
@@ -172,7 +174,7 @@ io.on('connection', (socket) => {
     	};
     });
 
-	
+
 // HOST FUNCTIONS
 
     socket.on('createRoom', function(data){
@@ -180,7 +182,6 @@ io.on('connection', (socket) => {
         let room = new Room(data[0], data[1], data[2]);
         rooms.push(room);
 });
-	
 // Doesn't work as inteded, because once more rooms are created, the timer doubles in speed.
 // TODO: create a seperate timer somehow that checks and runs for each room added. 
 
@@ -213,6 +214,7 @@ io.on('connection', (socket) => {
     socket.on('roomRedirect', function(){
     	socket.emit('redirect', destination[1])
 });
+
  	socket.on('disconnect', () => {
         for (i = 0; i < rooms.length; i++){
             current = rooms[i];
