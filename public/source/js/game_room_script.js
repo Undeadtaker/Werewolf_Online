@@ -55,6 +55,7 @@ socket.on('connect', () => {
     local = JSON.parse(localStorage.getItem('MyVariable'));
     old_name = JSON.parse(localStorage.getItem('MyVariable'))['name'];
     old_id = JSON.parse(localStorage.getItem('MyVariable'))['id'];
+    // calls 'giveID' and sends player and room info to server.js
     socket.emit('giveID', [name, local.id, local.room_id, socket.id]);
  });
 
@@ -73,7 +74,10 @@ button.addEventListener('click', function(){
 
 // send ready to server
 ready.addEventListener('click', function(){
-  socket.emit('ready');
+    room_id = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
+    player_id = JSON.parse(localStorage.getItem('MyVariable'))['id'];
+    let player_ready_data =[room_id, player_id];
+  socket.emit('ready', player_ready_data);
 });
 
 // Get list of player names (updates on socket connection)
@@ -99,6 +103,19 @@ socket.on('getNames', function(data){
 
 
 // Printing start on everyone ready, doesn't work, you have to make it.
-socket.on('START', function(){
+socket.on('START', function(data){
+    let room_id = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
+    if (data[0] == room_id) {
+        socket.emit('begin_game')
     console.log('GAME IS READY TO BEGIN!!!')
+    window.location.href = data[1];
+    }
+    
 });
+
+// Redirect
+//socket.on('redirect_to_game', function(data){
+  //  window.location.href = data;
+//});
+
+// TODO emit with roomID to server

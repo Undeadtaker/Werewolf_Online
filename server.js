@@ -36,10 +36,10 @@ addplayer(playerid,name){
 //  ---------- VARIABLES ---------- //
 
 rooms = []
-player_li = []
+player_li = [] // this is to be rooms[i].Players.length()
 
 // redirections 
-var destination = ['/lobby.html', '/room.html', '/host.html'];
+var destination = ['/lobby.html', '/room.html', '/host.html', '/game_page.html'];
 
 
 // functions
@@ -51,13 +51,14 @@ function check(li){
 
 	for (i = 0; i < li.length; i++){
 		if(li[i].ready == false){
-			all_ready = false;
+            all_ready = false;
+            console.log(li[i].name+ " Not ready!")
 		}	
 		else{
 			all_ready = true;
 		}	
 	}
-	if (li.length >= 6 && all_ready == true){
+	if (li.length >= 2 && all_ready == true){
 		console.log('The game starts soon!')
 		return ('start');
 		}
@@ -74,6 +75,7 @@ function deleteRoom(room){
         return 0;
     }
 }
+
 
 
 // App setup
@@ -128,6 +130,7 @@ io.on('connection', (socket) => {
 
                 let player = new Player(data[0], data[1],  false, data[3]);
                 room.Players.push(player);
+                //player_li.push(player)
                 // The ready buttons resets once someone new joins the game, makes infinite loop
                 // for (i = 0; i < room.Players; i++){
                 //     room.Players[i].ready = false;
@@ -160,21 +163,41 @@ io.on('connection', (socket) => {
     });
 
     // Setting the ready attribute of Player
-    socket.on('ready', function(){
-        for (i = 0; i < player_li.length; i++){
-    		if (player_li[i].id == socket.id){
-    			player_li[i].ready = true;
-                io.to('room1').emit('getNames', player_li);
-                console.log(player_li);
-    		}
+    socket.on('ready', function(data){
+        let room_id = data[0]
+        for (i = 0; i < rooms.length; i++){
+            
+            if (rooms[i].id == data[0]) {
+                for (j = 0; j < rooms[i].Players.length; j++) {
+                    if (rooms[i].Players[j].id == data[1]){
+                        rooms[i].Players[j].ready = true;
+                        //io.to('room1').emit('getNames', rooms[i].Players);
+                        socket.emit('getNames', rooms[i].Players);
+                        console.log(rooms[i].Players);
+                        //socket.emit('checked', check(rooms[i].Players))
+                        player_li = rooms[i].Players
+                    }
+                }
+            }
+    		
     	}
     	if (check(player_li) == 'start'){
     		console.log('server side ready');
-    		io.to('room1').emit('START');
-
-    	};
+            //io.to('room1').emit('START');
+            let sth = [room_id, destination[3]]
+            io.sockets.emit('START', sth);
+        }
+        else {
+            console.log("All players not ready")
+        }
     });
 
+    //socket.on('begin_game', function(){
+      //  socket.emit('redirect_to_game', destination[3])
+        
+   // });
+
+    // TODO
 
 // HOST FUNCTIONS
 
