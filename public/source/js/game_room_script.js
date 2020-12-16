@@ -5,6 +5,8 @@ var button = document.getElementById('send');
 var ready = document.getElementById('ready');
 var name = JSON.parse(localStorage.getItem('MyVariable'))['name'];
 
+console.log(name);
+
 console.log(ready);
 console.log(ready.innerHTML);
 
@@ -50,16 +52,21 @@ function remove_avatar(avatar) {
 
 // on connect give id of player 
 socket.on('connect', () => {
-    socket.emit('giveID', [socket.id, name]);
+    local = JSON.parse(localStorage.getItem('MyVariable'));
+    old_name = JSON.parse(localStorage.getItem('MyVariable'))['name'];
+    old_id = JSON.parse(localStorage.getItem('MyVariable'))['id'];
+    socket.emit('giveID', [name, local.id, local.room_id, socket.id]);
  });
+
 
 // Change the name of the Player on button click, also changes value for localstorage
 button.addEventListener('click', function(){
-  socket.emit('changeName', document.getElementById("name").value);
   name = document.getElementById("name").value;
+  room = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
   Player_ID = JSON.parse(localStorage.getItem('MyVariable'))['id']; // ID to be copied
+  socket.emit('changeName', [document.getElementById("name").value, Player_ID]);
   localStorage.clear();
-  localStorage.setItem("MyVariable", JSON.stringify({'name' : document.getElementById("name").value, 'id' : Player_ID}));
+  localStorage.setItem("MyVariable", JSON.stringify({'name' : document.getElementById("name").value, 'id' : Player_ID, 'room_id' : room}));
   document.getElementById("name").value= "";
 
 });
@@ -89,7 +96,7 @@ socket.on('getNames', function(data){
 
 
 
-// Printing start on everyone ready
+// Printing start on everyone ready, doesn't work, you have to make it.
 socket.on('START', function(){
     console.log('GAME IS READY TO BEGIN!!!')
 });
