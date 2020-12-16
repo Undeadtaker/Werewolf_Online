@@ -78,6 +78,7 @@ ready.addEventListener('click', function(){
 
 // Get list of player names (updates on socket connection)
 socket.on('getNames', function(data){
+    //alert(data[1].name);
     container.innerHTML = '';
     for (i = 0; i < data.length; i++){
         if (socket.id == data[i].id){
@@ -90,6 +91,7 @@ socket.on('getNames', function(data){
         }
 
         add_avatar(data[i].name)
+        //alert(data[i].name);
     }
 });
 

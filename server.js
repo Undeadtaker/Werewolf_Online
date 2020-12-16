@@ -165,6 +165,7 @@ io.on('connection', (socket) => {
     		if (player_li[i].id == socket.id){
     			player_li[i].ready = true;
                 io.to('room1').emit('getNames', player_li);
+                console.log(player_li);
     		}
     	}
     	if (check(player_li) == 'start'){
