@@ -2,10 +2,6 @@ var express = require('express');
 var socket = require('socket.io');
 
 
-
-
-
-
 //  ---------- SERVER SIDE ----------
 
 //  ---------- CLASSES ---------- //
@@ -19,7 +15,6 @@ class Player {
     this.socket = socket_id;
   }
 }
-
 
 class Room {
     constructor(name, id, max_players){
@@ -66,7 +61,6 @@ function check(li){
 		}
 }
 
-
 // Checking all the rooms and their Players list, if no one connects for more than 10 seconds,
 // it gets deleted 
 function deleteRoom(room){
@@ -77,8 +71,6 @@ function deleteRoom(room){
         return 0;
     }
 }
-
-
 
 
 // App setup
@@ -109,8 +101,6 @@ io.on('connection', (socket) => {
 	});
 
 
-
-
 // LOBBY FUNCTIONS
 
     // Sending all sockets in the lobby to inform them about the number of players in each room
@@ -123,10 +113,7 @@ io.on('connection', (socket) => {
         socket.emit('host', destination[2]);
     });
 
-
-
-
-
+	
 // ROOM FUNCTIONS
 
 
@@ -185,7 +172,7 @@ io.on('connection', (socket) => {
     	};
     });
 
-
+	
 // HOST FUNCTIONS
 
     socket.on('createRoom', function(data){
@@ -193,6 +180,7 @@ io.on('connection', (socket) => {
         let room = new Room(data[0], data[1], data[2]);
         rooms.push(room);
 });
+	
 // Doesn't work as inteded, because once more rooms are created, the timer doubles in speed.
 // TODO: create a seperate timer somehow that checks and runs for each room added. 
 
@@ -221,27 +209,10 @@ io.on('connection', (socket) => {
     // });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // redirecting player to room1, must be bellow socket.on 'giveID'
     socket.on('roomRedirect', function(){
     	socket.emit('redirect', destination[1])
 });
-
-
  	socket.on('disconnect', () => {
         for (i = 0; i < rooms.length; i++){
             current = rooms[i];
@@ -258,8 +229,4 @@ io.on('connection', (socket) => {
         }
         console.log(socket.id, ' Disconnected');
   });
-
-
 });
-
-
