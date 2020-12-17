@@ -1,12 +1,16 @@
 
 var socket = io.connect('http://localhost:4000');
-
+room = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
+Player_ID = JSON.parse(localStorage.getItem('MyVariable'))['id'];
 
 // function tocreate player avatar/ card
 function create_player_card(player_name, id) {
 
     let avatar_container = document.getElementsByClassName("player-card-container")[0];
 
+    if (id == Player_ID){
+        
+    }
 
     const card = document.createElement("div");
     card.isSelected = false;
@@ -61,13 +65,16 @@ function create_player_card(player_name, id) {
 
 }
 
-function display_self(){
-    room = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
-    socket.emit('show_players', room)
-}
 
-socket.on('show_players', function(data){
+
+
+socket.emit('show_players', room);
+
+socket.on('the_players', function(data){
+    console.log("TEST "+data)
+    
     for (i=0;i < data.length; i++){
+        console.log("Name: "+ data[i].name + "||| ID: "+ data[i].id)
         create_player_card(data[i].name, data[i].id)
     }
 });
