@@ -4,15 +4,37 @@ room = JSON.parse(localStorage.getItem('MyVariable'))['room_id'];
 Player_ID = JSON.parse(localStorage.getItem('MyVariable'))['id'];
 
 // function tocreate player avatar/ card
-function create_player_card(player_name, id) {
+function create_player_card(player_name, id, role) {
 
     let avatar_container = document.getElementsByClassName("player-card-container")[0];
 
+    const card = document.createElement("div");
+
+    card.innerHTML = player_name
+
+    card.style.backgroundImage =  'url("./source/img/Picture2.png")';
+
     if (id == Player_ID){
-        
+        if (role == 'Witch') {
+            card.style.backgroundImage = 'url("./source/img/witch-card.png")';
+        }
+        if (role == 'Villager') {
+            card.style.backgroundImage = 'url("./source/img/Picture2.png")';
+        }  
+        if (role == 'WW') {
+            card.style.backgroundImage = 'url("./source/img/werewolf-card.png")';
+        }  
+        if (role == 'Seer') {
+            card.style.backgroundImage = 'url("./source/img/seer-card.png")';
+        }  
+        if (role == 'Hunter') {
+            card.style.backgroundImage = 'url("./source/img/hunter-card.png")';
+        }  
+        if (role == 'Cupid') {
+            card.style.backgroundImage = 'url("./source/img/cupid-card.png")';
+        }  
     }
 
-    const card = document.createElement("div");
     card.isSelected = false;
     card.id = id
     card.classList.add("card");
@@ -75,7 +97,7 @@ socket.on('the_players', function(data){
     
     for (i=0;i < data.length; i++){
         console.log("Name: "+ data[i].name + "||| ID: "+ data[i].id)
-        create_player_card(data[i].name, data[i].id)
+        create_player_card(data[i].name, data[i].id, data[i].role)
     }
 });
 
