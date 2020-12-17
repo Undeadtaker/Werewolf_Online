@@ -31,7 +31,7 @@ body{
 }
 
 
-.player-card-container {
+/*.player-card-container {
     background-repeat: no-repeat;
     background-position: 50% 75%;
     background-size: 50%;
@@ -46,6 +46,30 @@ body{
     grid-template-rows: repeat(auto-fill, minmax(120px, 1fr));
     gap: 15px;
     overflow-y: auto;
+}*/
+
+
+.player-card-container {
+    background-image: url('picture2.png');
+    background-repeat: no-repeat;
+    background-position: 50% 75%;
+    background-size: 50%;
+    border-radius: 5px;
+    height: 100px;
+    width: 70px;
+    /*background-color: rgba(255, 255, 255, 0.8);*/
+    /*background-color: #B03920;*/
+    background-color: #DBDBDB;
+    opacity: 0;
+    /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+    border: #B03920;
+    margin-left: 5%;
+    margin-top: 5%;
+    padding: 7px;
+    font-family: 'the_ancientregular';
+    font-weight: bold;
+    font-size: 9px;
+    text-align: left;
 }
 
 ::-webkit-scrollbar {
