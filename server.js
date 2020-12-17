@@ -218,19 +218,30 @@ io.on('connection', (socket) => {
 
     //
     socket.on('show_players', function(data){
-        let room = get_roomBy_ID(data)
-
+        let room = get_roomBy_ID(data);
+/*
         let pid = []
         let p_names = []
         for (i=0; i< player_li.length ; i++){
             pid.push(player_li[i].id)
             p_names.push(player_li[i].name)
         }
+*/
+        console.log(room.id + ":RoomID");
 
-        console.log(room.id + ":RoomID")
-        socket.emit('show_players', room.Players)
+        let list1 = [];
+        /*for (i=0; i < final_players.length; i++){
+            list1.push({name: final_players[i].name, id: final_players[i].id})
+            //list1.push()
+        }
+
+        let x = list1;
+        console.log(x)*/
+        socket.emit('the_players', room.game_data.Players);
         
     });
+
+
 
 // HOST FUNCTIONS
 
@@ -294,6 +305,9 @@ io.on('connection', (socket) => {
 
 //-------------------------------------------------system.js---------------
 
+var final_players =[]
+
+
 function shuffle(a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
@@ -328,8 +342,9 @@ function create(ids,names,gameid){
     }
     shuffled=shuffle(roles);
     for (i = 0; i < (ids.length); i++){
-      var np = new GamePlayer(ng, ids[i], names[i], shuffled[i]);
+      var np = new GamePlayer(ids[i], names[i], shuffled[i]);
       np.checkwitch();
+      final_players.push(np)
       console.log("np.id display role ");
       ng.addplayer(np);
       ng.Roles.push(np.role);
@@ -340,8 +355,8 @@ function create(ids,names,gameid){
   }
   
 class GamePlayer{
-    constructor(game,id, name, role){
-      this.game=game;
+    constructor(id, name, role){
+      //this.game=game;
       this.id=id;
       this.name=name;
       this.role=role;
