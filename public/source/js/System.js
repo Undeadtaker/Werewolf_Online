@@ -151,7 +151,7 @@ class Game{
     var vil=0;
     var love=0;
     for (x in this.Players){
-      if (this.Players[x].Role="ww" or this.Players[x].Role="whiteww"){
+      if (this.Players[x].Role=="ww" || this.Players[x].Role=="whiteww"){
         ww+=1;
       }else if (this.Players[x].Role="villager"){
         vil+=1;

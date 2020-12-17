@@ -219,27 +219,13 @@ io.on('connection', (socket) => {
     //
     socket.on('show_players', function(data){
         let room = get_roomBy_ID(data);
-/*
-        let pid = []
-        let p_names = []
-        for (i=0; i< player_li.length ; i++){
-            pid.push(player_li[i].id)
-            p_names.push(player_li[i].name)
-        }
-*/
-        console.log(room.id + ":RoomID");
 
-        let list1 = [];
-        /*for (i=0; i < final_players.length; i++){
-            list1.push({name: final_players[i].name, id: final_players[i].id})
-            //list1.push()
-        }
-
-        let x = list1;
-        console.log(x)*/
+        //console.log(room.id + ":RoomID");
         socket.emit('the_players', room.game_data.Players);
-        
+        socket.emit('game_data', room.game_data);
     });
+
+
 
 
 

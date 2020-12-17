@@ -10,7 +10,7 @@ function create_player_card(player_name, id, role) {
 
     const card = document.createElement("div");
 
-    card.innerHTML = player_name
+    
 
     card.style.backgroundImage =  'url("./source/img/Picture2.png")';
 
@@ -98,6 +98,21 @@ socket.on('the_players', function(data){
     for (i=0;i < data.length; i++){
         console.log("Name: "+ data[i].name + "||| ID: "+ data[i].id)
         create_player_card(data[i].name, data[i].id, data[i].role)
+    }
+});
+
+socket.on('game_data', function(data){
+    
+    document.getElementById('counter-container').innerHTML = 'Number of nights: '+ data.Nights;
+    document.getElementById('title').innerHTML = 'Cupid'
+    
+
+    for (i=0;i < data.Players.length; i++){
+        if (data.Players[i].id == Player_ID){
+            if (data.Players[i].role =='Cupid'){
+                document.getElementById('subtitle').innerHTML = 'Choose lovers'
+            }
+        }
     }
 });
 
